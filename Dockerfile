@@ -4,14 +4,14 @@
 FROM debian:bookworm-slim AS downloader
 
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends curl ca-certificates \
-    && rm -rf /var/lib/apt/lists/*
+  && apt-get install -y --no-install-recommends curl ca-certificates \
+  && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /tmp
 
 RUN curl -sSL "https://unmined.net/download/unmined-cli-linux-x64-dev/" \
-    | tar -xz \
-    && mv unmined-cli* /opt/unmined-cli
+  | tar -xz \
+  && mv unmined-cli* /opt/unmined-cli
 
 # ---------------------------------------------------------
 # Stage 2: Minimal runtime image
@@ -24,12 +24,13 @@ LABEL org.opencontainers.image.licenses="Proprietary"
 
 # Install minimal runtime dependencies for .NET / image rendering
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
-        libicu72 \
-        libfontconfig1 \
-        libfreetype6 \
-    && rm -rf /var/lib/apt/lists/* \
-    && useradd -m -s /bin/bash unmined
+  && apt-get install -y --no-install-recommends \
+  libicu72 \
+  libssl3 \
+  libfontconfig1 \
+  libfreetype6 \
+  && rm -rf /var/lib/apt/lists/* \
+  && useradd -m -s /bin/bash unmined
 
 COPY --from=downloader --chown=unmined:unmined /opt/unmined-cli /opt/unmined-cli
 
